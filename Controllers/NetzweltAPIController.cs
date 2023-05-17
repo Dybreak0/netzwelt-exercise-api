@@ -13,11 +13,9 @@ namespace AppTestAPI.Controllers
     [Route("[controller]/[action]")]
     public class NetzweltAPIController : Controller
     {
-        private readonly ILogger<NetzweltAPIController> _logger;
 
-        public NetzweltAPIController(ILogger<NetzweltAPIController> logger)
+        public NetzweltAPIController()
         {
-            _logger = logger;
         }
 
         [HttpPost]
@@ -26,23 +24,22 @@ namespace AppTestAPI.Controllers
         {
             try
             {
-                using (var client = new HttpClient())
+                using (HttpClient client = new HttpClient())
                 {
                     // Create and setup the client
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     // Create and setup the http request
-                    var method = new HttpMethod("POST");
-                    var api = "https://netzwelt-devtest.azurewebsites.net/Account/SignIn";
+                    string api = "https://netzwelt-devtest.azurewebsites.net/Account/SignIn";
                     StringContent postValue = new StringContent(JsonConvert.SerializeObject(loginPayload), Encoding.UTF8, "application/json");
 
-                    var httpResponseMessage = client.PostAsync(api, postValue).Result;
+                    HttpResponseMessage httpResponseMessage = client.PostAsync(api, postValue).Result;
 
                     // If request successfully post data
                     if (httpResponseMessage.IsSuccessStatusCode)
                     {
-                        var responseData = httpResponseMessage.Content.ReadFromJsonAsync<LoginResponse>().Result;
+                        LoginResponse responseData = httpResponseMessage.Content.ReadFromJsonAsync<LoginResponse>().Result;
                         return Ok(responseData);
                     }
                     else
@@ -63,22 +60,20 @@ namespace AppTestAPI.Controllers
         {
             try
             {
-                using (var client = new HttpClient())
+                using (HttpClient client = new HttpClient())
                 {
                     // Create and setup the client
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     // Create and setup the http request
-                    var method = new HttpMethod("GET");
-                    var api = "https://netzwelt-devtest.azurewebsites.net/Territories/All";
-
-                    var httpResponseMessage = client.GetAsync(api).Result;
+                    string api = "https://netzwelt-devtest.azurewebsites.net/Territories/All";
+                    HttpResponseMessage httpResponseMessage = client.GetAsync(api).Result;
 
                     // If request successfully retrieves data
                     if (httpResponseMessage.IsSuccessStatusCode)
                     {
-                        var responseData = httpResponseMessage.Content.ReadFromJsonAsync<Territory>().Result;
+                        Territory responseData = httpResponseMessage.Content.ReadFromJsonAsync<Territory>().Result;
                         return Ok(responseData);
                     }
                     else
