@@ -21,7 +21,7 @@ namespace AppTestAPI.Controllers
         }
 
         [HttpPost]
-        [ActionName("Login")]
+        [ActionName("Account/SignIn")]
         public IActionResult Login(LoginPayload loginPayload)
         {
             try
@@ -37,13 +37,9 @@ namespace AppTestAPI.Controllers
                     var api = "https://netzwelt-devtest.azurewebsites.net/Account/SignIn";
                     StringContent postValue = new StringContent(JsonConvert.SerializeObject(loginPayload), Encoding.UTF8, "application/json");
 
-                    //var httpRequestMessage = new HttpRequestMessage(method, api) { Content = postValue };
-                    //var httpResponseMessage = client.SendAsync(httpRequestMessage).Result;
-
-
                     var httpResponseMessage = client.PostAsync(api, postValue).Result;
 
-                    // If request successfully retrieves data
+                    // If request successfully post data
                     if (httpResponseMessage.IsSuccessStatusCode)
                     {
                         var responseData = httpResponseMessage.Content.ReadFromJsonAsync<LoginResponse>().Result;
@@ -59,8 +55,42 @@ namespace AppTestAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            return null;
+        }
 
+        [HttpGet]
+        [ActionName("Territories/All")]
+        public IActionResult GetAllTerritories()
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    // Create and setup the client
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    // Create and setup the http request
+                    var method = new HttpMethod("GET");
+                    var api = "https://netzwelt-devtest.azurewebsites.net/Territories/All";
+
+                    var httpResponseMessage = client.GetAsync(api).Result;
+
+                    // If request successfully retrieves data
+                    if (httpResponseMessage.IsSuccessStatusCode)
+                    {
+                        var responseData = httpResponseMessage.Content.ReadFromJsonAsync<Territory>().Result;
+                        return Ok(responseData);
+                    }
+                    else
+                    {
+                        throw new Exception("Failed to retrieve territories");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
