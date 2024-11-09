@@ -1,2 +1,2 @@
-# netzwelt-exercise-api
-Server side for netzwelt-exercise
+# jjs-portfolio-api
+Server side for jjs portfolio
